@@ -18,12 +18,13 @@ class Game:
         return '\n'.join(map(lambda row: ''.join(row), np.array(['🟡' if one == '1' else '🔴' if two == '1' else '⚪' for one, two in zip(np.binary_repr(self.board1).rjust(42, '0'), np.binary_repr(self.board2).rjust(42, '0'))], dtype=object).reshape((6, 7))))
     
     def make_move(self, column: int, player: int) -> None:
+        # column 0-indexed
         str_board = np.binary_repr(self.board1 | self.board2).rjust(42, '0')
 
         if str_board[column] == '1':
             raise MoveError()
         
-        self.past_moves.append((self.board1, self.board2, self.player))
+        self.past_moves.append((self.board1, self.board2))
 
         for i in range(column + 35, column - 1, -7):
             if str_board[i] == '0':
@@ -46,7 +47,7 @@ class Game:
         if not self.past_moves:
             self.board1, self.board2, self.player = np.int64(0), np.int64(0), self.PLAYER1
         else:
-            self.board1, self.board2, self.player = self.past_moves.pop()
+            self.board1, self.board2, self.player = self.past_moves.pop() + (1 - self.player if moves % 2 else self.player,)
 
     def status(self) -> str:
         str_board1 = np.binary_repr(self.board1).rjust(42, '0')

@@ -1,7 +1,7 @@
 import asyncio
 import discord
-from game import Game, MoveError
 from discord.ext import commands
+from game import Game, MoveError
 
 class Connect4(commands.Cog):
     DIGITS = [str(i) + '\u20E3' for i in range(1, 8)]
@@ -13,7 +13,7 @@ class Connect4(commands.Cog):
         self.client = client
     
     @commands.command()
-    async def play(self, ctx, player2: discord.Member=None):
+    async def play(self, ctx, player2: discord.Member = None):
         player1 = ctx.author
         if player2 is None:
             player2 = ctx.author
@@ -36,7 +36,7 @@ class Connect4(commands.Cog):
 
         game = Game()
         player = 0
-        message = await ctx.send(str(game))
+        message = await ctx.send(f'{player1.display_name} VS {player2.display_name}\n{str(game)}')
         
         for digit in self.DIGITS:
             await message.add_reaction(digit)
@@ -68,7 +68,7 @@ class Connect4(commands.Cog):
             except (ValueError, MoveError):
                 pass
 
-            await message.edit(content=str(game))
+            await message.edit(content=f'{player1.display_name} VS {player2.display_name}\n{str(game)}')
 
             status = game.status()
             match status:
